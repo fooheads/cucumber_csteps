@@ -16,6 +16,9 @@ module CucumberCsteps
       module #{module_name}
         extend FFI::Library
         ffi_lib '#{library_name}'
+
+        attach_function('mu_assert_get_last_error', [], :string)
+        attach_function('mu_assert_clear_last_error', [], :void)
       end
     }
     #puts module_code
@@ -30,7 +33,7 @@ module CucumberCsteps
 
       attach_code = %Q{
         module #{module_name}
-          #{fun_name} = attach_function('#{fun_name}', [#{args}], :string)
+          #{fun_name} = attach_function('#{fun_name}', [#{args}], :void)
         end
       }
       #puts attach_code
@@ -45,11 +48,12 @@ module CucumberCsteps
         "#{arg.identifier}.#{cast_op}"
       end.join(",")
 
-      #code_block = "lambda { |#{lambda_args}| #{module_name}.#{fun_name}(#{fun_args}) }"
       code_block = %Q{lambda { |#{lambda_args}| 
-        res = #{module_name}.#{fun_name}(#{fun_args})
-        if not res.nil?
-          fail(res)
+        #{module_name}.mu_assert_clear_last_error
+        #{module_name}.#{fun_name}(#{fun_args})
+        last_error = #{module_name}.mu_assert_get_last_error
+        if not last_error.nil? and not last_error.empty?
+          fail(last_error)
         end
        }}
       #puts code_block
