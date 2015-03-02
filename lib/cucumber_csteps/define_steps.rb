@@ -12,12 +12,15 @@ module CucumberCsteps
 
   def self.define_steps(filename, library_name)
     module_name = library_name.camelize
-    m = eval(%Q{
+    module_code = %Q{
       module #{module_name}
         extend FFI::Library
         ffi_lib '#{library_name}'
       end
-    }).first
+    }
+    #puts module_code
+    eval(module_code)
+
     step_prefix = find_step_prefix(filename)
     step_definitions = find_step_definitions(filename)
     step_definitions.map do |step_definition, line_number|
@@ -27,7 +30,7 @@ module CucumberCsteps
 
       attach_code = %Q{
         module #{module_name}
-          attach_function('#{fun_name}', [#{args}], :string)
+          #{fun_name} = attach_function('#{fun_name}', [#{args}], :string)
         end
       }
       #puts attach_code
@@ -42,7 +45,13 @@ module CucumberCsteps
         "#{arg.identifier}.#{cast_op}"
       end.join(",")
 
-      code_block = "lambda { |#{lambda_args}| #{module_name}.#{fun_name}(#{fun_args}) }"
+      #code_block = "lambda { |#{lambda_args}| #{module_name}.#{fun_name}(#{fun_args}) }"
+      code_block = %Q{lambda { |#{lambda_args}| 
+        res = #{module_name}.#{fun_name}(#{fun_args})
+        if not res.nil?
+          fail(res)
+        end
+       }}
       #puts code_block
 
       [step.regex, eval(code_block) ]
