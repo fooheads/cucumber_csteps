@@ -29,12 +29,13 @@ module CucumberCsteps
     rule(:paren_group)        { lparen >> anything.repeat(1).as(:regex) >> rparen } 
 
     rule(:c_identifier)       { match('[^(),]').repeat(1) }
-    rule(:primitive_type)     { (match('const char\s*\*') | str('int') | str('long')).as(:c_type) >> space? }
+    rule(:primitive_type)     { (str('char*') | str('int') | str('long') | str('float')).as(:c_type) >> space? }
     rule(:c_type)             { primitive_type }
     rule(:c_arg)              { c_type >> c_identifier.as(:c_identifier) } 
     rule(:c_args)             { lparen >> (c_arg.as(:c_arg) >> (comma >> c_arg.as(:c_arg)).repeat).maybe.as(:c_args) >> rparen } 
+    rule(:garbage)            { match('[^(),]').repeat }
 
-    rule(:step)               { space? >> keyword >> paren_group >> c_args }
+    rule(:step)               { space? >> keyword >> paren_group >> c_args >> garbage }
 
     root(:step)
   end
