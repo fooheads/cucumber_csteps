@@ -19,14 +19,15 @@ module CucumberCsteps
     rule(:lparen)             { str('(') >> space? }
     rule(:rparen)             { str(')') >> space? }
     rule(:comma)              { str(',') >> space? }
+    rule(:quote)              { str('"') >> space? }
 
     rule(:space)              { match('\s').repeat(1) }
     rule(:space?)             { space.maybe }
 
     rule(:keyword)            { (str('GIVEN') | str('WHEN') | str('THEN')).as(:keyword) >> space? }
-    rule(:anything)           { inner_paren_group | match('[^()]').repeat(1) }
-    rule(:inner_paren_group)  { lparen >> anything.repeat(1) >> rparen } 
-    rule(:paren_group)        { lparen >> anything.repeat(1).as(:regex) >> rparen } 
+    # rule(:anything)           { inner_paren_group | match('[^()]').repeat(1) }
+    # rule(:inner_paren_group)  { lparen >> anything.repeat(1) >> rparen } 
+    # rule(:paren_group)        { lparen >> anything.repeat(1).as(:regex) >> rparen } 
 
     rule(:c_identifier)       { match('[^(),]').repeat(1) }
     rule(:primitive_type)     { (str('char*') | str('int') | str('long') | str('float')).as(:c_type) >> space? }
@@ -35,7 +36,10 @@ module CucumberCsteps
     rule(:c_args)             { lparen >> (c_arg.as(:c_arg) >> (comma >> c_arg.as(:c_arg)).repeat).maybe.as(:c_args) >> rparen } 
     rule(:garbage)            { match('[^(),]').repeat }
 
-    rule(:step)               { space? >> keyword >> paren_group >> c_args >> garbage }
+    rule(:anything)           { str('\"') | match('[^"]') }
+
+    rule(:step_matcher)       { lparen >> quote >> anything.repeat(1).as(:regex) >> quote >> rparen } 
+    rule(:step)               { space? >> keyword >> step_matcher >> c_args >> garbage }
 
     root(:step)
   end
