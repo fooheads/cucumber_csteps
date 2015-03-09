@@ -20,8 +20,8 @@ module CucumberCsteps
         attach_function('mu_assert_get_last_error', [], :string)
         attach_function('mu_assert_clear_last_error', [], :void)
 
-        attach_function('before_scenario', [], :void)
-        attach_function('after_scenario', [], :void)
+        attach_function('before_scenario', [], :string)
+        attach_function('after_scenario', [], :string)
       end
     }
     #puts module_code
