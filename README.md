@@ -23,7 +23,7 @@ Or install it yourself as:
 Write your step definitions in this form
 
 ```c
-#include &lt;csteps.h&gt;
+#include <csteps.h>
 
 // You need a uniq STEP_PREFIX per file
 #define STEP_PREFIX atm_steps
