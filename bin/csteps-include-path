@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+def include_path
+  File.expand_path(File.join(__FILE__, '..', '..', 'include'))
+end
+
+puts include_path
