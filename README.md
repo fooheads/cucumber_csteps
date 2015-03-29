@@ -20,6 +20,33 @@ Or install it yourself as:
 
 ## Usage
 
+Write your step definitions in this form
+
+```c
+#include &lt;csteps.h&gt;
+
+// You need a uniq STEP_PREFIX per file
+#define STEP_PREFIX atm_steps
+
+GIVEN("^the account balance is (\d+)$") (int balance) {
+  // setup account
+}
+
+WHEN("^the account holder requests (\d+)$") (int amount) {
+  // make withdraval
+}
+
+THEN("^the account balance should be (\d+)$") (int balance) {
+  // assert correct behaviuor
+}
+```
+
+Place your step definition files in features/step_definitions
+
+Compile the code. The include path of &lt;csteps.h&gt; can be found by running
+
+    $ csteps-include-path
+
 Link your production code and step_definitions into a shared library.
 
 Put this in features/support/env.rb (replace LIBNAME with the name of your library)

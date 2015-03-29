@@ -1,0 +1,105 @@
+<h1 id="cucumbercsteps">cucumber_csteps</h1>
+
+<p>Write <a href="https://github.com/cucumber/cucumber">Cucumber</a> step definitions in C (or C++)</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>Add this line to your application’s Gemfile:</p>
+
+<p><code>ruby
+gem 'cucumber_csteps'
+</code></p>
+
+<p>And then execute:</p>
+
+<pre><code>$ bundle
+</code></pre>
+
+<p>Or install it yourself as:</p>
+
+<pre><code>$ gem install cucumber_csteps
+</code></pre>
+
+<h2 id="usage">Usage</h2>
+
+<p>Write your step definitions in this form</p>
+
+<p>```c
+#include &lt;csteps.h&gt;</p>
+
+<p>// You need a uniq STEP_PREFIX per file
+#define STEP_PREFIX atm_steps</p>
+
+<p>GIVEN(“^the account balance is (\d+)$”) (int balance) {
+  // setup account
+}</p>
+
+<p>WHEN(“^the account holder requests (\d+)$”) (int amount) {
+  // make withdraval
+}</p>
+
+<p>THEN(“^the account balance should be (\d+)$”) (int balance) {
+  // assert correct behaviuor
+}
+```</p>
+
+<p>Place your step definition files in features/step_definitions</p>
+
+<p>Compile the code. The include path of &lt;csteps.h&gt; can be found by running</p>
+
+<pre><code>$ csteps-include-path
+</code></pre>
+
+<p>Link your production code and step_definitions into a shared library.</p>
+
+<p>Put this in features/support/env.rb (replace LIBNAME with the name of your library)</p>
+
+<p><code>ruby
+require 'cucumber_csteps'
+CucumberCsteps.load_steps('LIBNAME', 'libLIBNAME.so', ["features/**/*.c"])
+</code></p>
+
+<p>Run cucumber as you would normally:</p>
+
+<pre><code>$ cucumber
+</code></pre>
+
+<h2 id="example">Example</h2>
+
+<p>For a full working example, checkout <a href="https://github.com/fooheads/cucumber_csteps-atm">https://github.com/fooheads/cucumber_csteps-atm</a></p>
+
+<h2 id="contributing">Contributing</h2>
+
+<ol>
+  <li>Fork it ( https://github.com/[my-github-username]/cucumber_csteps/fork )</li>
+  <li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+  <li>Commit your changes (<code>git commit -am 'Add some feature'</code>)</li>
+  <li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+  <li>Create a new Pull Request</li>
+</ol>
+
+<h2 id="license">License</h2>
+
+<p>(The MIT License)</p>
+
+<p>Copyright (c) 2015 Fooheads AB <a href="&#109;&#097;&#105;&#108;&#116;&#111;:&#104;&#101;&#108;&#108;&#111;&#064;&#102;&#111;&#111;&#104;&#101;&#097;&#100;&#115;&#046;&#099;&#111;&#109;">&#104;&#101;&#108;&#108;&#111;&#064;&#102;&#111;&#111;&#104;&#101;&#097;&#100;&#115;&#046;&#099;&#111;&#109;</a></p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+‘Software’), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED ‘AS IS’, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
