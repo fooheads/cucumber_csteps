@@ -11,6 +11,14 @@ module CucumberCsteps
     'double'      => {ffi_type: ':double', cast_op: 'to_f'},
   }
 
+  def self.load_steps(lib_name, lib_file, glob_patterns)
+    Dir.glob(glob_patterns).each do |file|
+      CucumberCsteps.define_steps(file, lib_name, lib_file).each do |regex, block|
+        Cucumber::RbSupport::RbDsl.register_rb_step_definition(regex, block)
+      end
+    end
+  end
+
   def self.define_steps(filename, library_name, library_file)
     module_name = library_name.camelize
     module_code = %Q{
@@ -18,11 +26,19 @@ module CucumberCsteps
         extend FFI::Library
         ffi_lib ['#{library_name}', '#{library_file}']
 
-        #attach_function('mu_assert_get_last_error', [], :string)
-        #attach_function('mu_assert_clear_last_error', [], :void)
+        begin
+          attach_function('before_scenario', [], :void)
+          before_hook = proc { #{module_name}.before_scenario() }
+          Cucumber::RbSupport::RbDsl.register_rb_hook('before', [], before_hook)
+        rescue FFI::NotFoundError
+        end
 
-        #attach_function('before_scenario', [], :string)
-        #attach_function('after_scenario', [], :string)
+        begin
+          attach_function('after_scenario', [], :void)
+          after_hook = proc { #{module_name}.after_scenario() }
+          Cucumber::RbSupport::RbDsl.register_rb_hook('after', [], proc { after_hook() })
+        rescue FFI::NotFoundError
+        end
       end
     }
     #puts module_code
@@ -38,8 +54,6 @@ module CucumberCsteps
       attach_code = %Q{
         module #{module_name}
           #{fun_name} = attach_function('#{fun_name}', [#{args}], :void)
-          puts "hola:"
-          puts #{fun_name}.class
         end
       }
       #puts attach_code
