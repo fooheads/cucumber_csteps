@@ -29,24 +29,4 @@ module CucumberCsteps
      
   end
 
-
-
-  #jmp_buf env;
-  #
-  #void on_sigabrt (int signum)
-  #{
-  #  longjmp (env, 1);
-  #}
-  #
-  #void try_and_catch_abort (void (*func)(void))
-  #{
-  #  if (setjmp (env) == 0) {
-  #    signal(SIGABRT, &on_sigabrt);
-  #    (*func)();
-  #  }
-  #  else {
-  #    std::cout << "aborted\n";
-  #  }
-  #}
-
 end
