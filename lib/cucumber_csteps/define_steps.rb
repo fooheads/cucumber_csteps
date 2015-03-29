@@ -41,7 +41,7 @@ module CucumberCsteps
         end
       end
     }
-    #puts module_code
+
     eval(module_code)
 
     step_prefix = find_step_prefix(filename)
@@ -56,7 +56,7 @@ module CucumberCsteps
           #{fun_name} = attach_function('#{fun_name}', [#{args}], :void)
         end
       }
-      #puts attach_code
+
       eval(attach_code)
 
       lambda_args = step.c_args.map do |arg|
@@ -69,16 +69,10 @@ module CucumberCsteps
       end.join(",")
 
       code_block = %Q{lambda { |#{lambda_args}| 
-        ##{module_name}.mu_assert_clear_last_error
         CucumberCsteps.try_and_catch_abort do
           #{module_name}.#{fun_name}(#{fun_args})
         end
-        #last_error = #{module_name}.mu_assert_get_last_error
-        #if not last_error.nil? and not last_error.empty?
-        #  fail(last_error)
-        #end
        }}
-      #puts code_block
 
       [step.regex, eval(code_block) ]
     end
