@@ -47,6 +47,10 @@ Compile the code. The include path of &lt;csteps.h&gt; can be found by running
 
     $ csteps-include-path
 
+In order to cope with different dev environments, it is most feasible to run this command in your build, e.g. in a Makefile:
+
+    CSTEPS_INCLUDE_PATH = $(shell csteps-include-path)
+
 Link your production code and step_definitions into a shared library.
 
 Put this in features/support/env.rb (replace LIBNAME with the name of your library)
